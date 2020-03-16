@@ -37,8 +37,14 @@
             <!-- Latest compiled JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     </head>
-
-    <body class="container vh-100" style="background-image: url(pic/backgroundhome.png); background-size: cover;">
+    <script type = "text/javascript">
+        function loadTogaSize()
+        {
+            document.getElementById("togaSizeSelect").value = "<?php echo $resultToga['toga_size']; ?>";
+            
+        }
+    </script>
+    <body class="container vh-100" style="background-image: url(pic/backgroundhome.png); background-size: cover;" onload = "loadTogaSize()">
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-2 shadow justify-content-between">
             <a class="btn btn-outline-secondary nav-item text-white" href="staff_for_student_form_page.php">Home</a>
             <a class="navbar-brand text-white">President University Graduation Automated Clearance System</a>
@@ -65,7 +71,7 @@
                                 <h1 class="text-center text-dark">Student Graduation Clearance Form</h1>
                             </div>
             
-                        <div class="form-group">
+                        <div class="form-group" >
                             <h5 class="text-dark float-left">Toga Size : <?php echo $resultToga['toga_size']?></h5>
                             <table class="table table-bordered table-striped bg-white table-responsive">
                                 <thead class="thead-dark">
@@ -105,13 +111,46 @@
                                                 if($flag == 1){
                                                     echo "<td>
                                                             <a class='btn btn-outline-success fas fa-check-square' href='staff_checklist_student.php?cs_id=".$cs_id."&dep_id=".$result['dep_id']."&std_id=".$std_id."&prev_step=".$resultprepPrev['step']."'> CHECK</a>
-                                                          </td>";
+                                                          ";
+                                                          if($result['activity'] == 'Fitting Toga') {
+                                                            echo "<form action='' method='post' id='test'>
+                                                            <div class='form-group'>
+                                                            <select id = 'togaSizeSelect' class='rounded bg-white' name='toga_size id='toga' style='width: 200px; padding: 7px;' onload = 'loadSize('".$resultToga['toga_size']."')'>
+                                                                <option value=''>Toga Size</option>  
+                                                                <option value='XS'>XS</option>  
+                                                                <option value='S'>S</option>  
+                                                                <option value='M'>M</option>  
+                                                                <option value='L'>L</option>
+                                                                <option value='XL'>XL</option>  
+                                                                <option value='XXL'>XXL</option>  
+                                                            </select>
+                                                        </div>
+                                                                </form>";
+                                                        }
                                                 }
                                                 elseif ($flag == 0) {
                                                     echo "<td>
                                                             <a class='btn btn-outline-success fas fa-check-square disabled'  href='staff_checklist_student.php?cs_id=".$cs_id."dep_id=".$result['dep_id']."&std_id=".$std_id."'> CHECK</a>
-                                                          </td>";
+                                                          ";
+                                                          if($result['activity'] == 'Fitting Toga') {
+                                                            echo "<form action='' method='post' id='test'>
+                                                            <div class='form-group'>
+                                                            <select disabled id = 'togaSizeSelect' class='rounded bg-white' name='toga_size id='toga' style='width: 200px; padding: 7px;' onload = 'loadSize('".$resultToga['toga_size']."')'>
+                                                                <option value=''>Toga Size</option>  
+                                                                <option value='XS'>XS</option>  
+                                                                <option value='S'>S</option>  
+                                                                <option value='M'>M</option>  
+                                                                <option value='L'>L</option>
+                                                                <option value='XL'>XL</option>  
+                                                                <option value='XXL'>XXL</option>  
+                                                            </select>
+                                                        </div>
+                                                                </form>";
+                                                        }
+
                                                 }
+
+                                                echo "</td>";
                                                 if($result['cs_status'] == 'Checked'){
                                                     $flag = 1;
                                                 }
@@ -135,4 +174,11 @@
             </div>
         </div>
     </body>
+    <script>
+        $(document).ready(function() {
+            $('#togaSizeSelect').change(function() {
+                window.location.href="staff_checklist_student.php?toga_size=" + document.getElementById('togaSizeSelect').value + "&std_id=<?php echo $std_id; ?>";
+            })
+        })
+    </script>
 </html>

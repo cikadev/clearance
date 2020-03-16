@@ -8,6 +8,19 @@
         header("Location: user_login_page.html");
     }
 
+
+
+    if(isset($_GET['toga_size']))
+    {
+        $std_id = $_GET['std_id'];
+        $toga_size = $_GET['toga_size'];
+        $sqlupdate = $connection->prepare("UPDATE tbl_student SET toga_size = '$toga_size' WHERE student_id = '$std_id'");
+        $sqlupdate->execute();
+    }
+
+    else
+    {
+
     $cs_id = $_GET['cs_id'];
     $dep_id = $_GET['dep_id'];
     $std_id = $_GET['std_id'];
@@ -61,6 +74,7 @@
         $message6 = "YOU HAVE NOT COMPLETED ".$resultprevStat['activity'];
         echo "<script type='text/javascript'>alert('$message6');</script>";
     }
+}
 
 ?>
 <script type="text/javascript">

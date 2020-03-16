@@ -15,11 +15,17 @@
     $sqlshow = $connection->prepare("SELECT cs.activity, cs.cs_status, st.student_major, st.student_name FROM tbl_cs cs, tbl_student st WHERE cs.fk_id = st.student_id AND cs.dep_id = $_SESSION[dep_id]");
     $sqlshow->execute();
 
+    $countchecked = $connection->prepare("SELECT COUNT(cs_status) AS amount from tbl_cs WHERE cs_status = 'Checked' AND dep_id = $_SESSION[dep_id]");
+    $countchecked->execute();
+    $countcheckedresult = $countchecked->fetch();
 
+    $countuncheck = $connection->prepare("SELECT COUNT(cs_status) AS amount from tbl_cs WHERE cs_status = 'Uncheck' AND dep_id = $_SESSION[dep_id]");
+    $countuncheck->execute();
+    $countuncheckresult = $countuncheck->fetch();
 ?>
 <html>
     <head>
-        <title>PUGACS</title>
+        <title id="pageTitle"><?php echo 'PUAGCS Checked = '.$countcheckedresult['amount'].' Uncheck = '.$countuncheckresult['amount'];?></title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
@@ -210,6 +216,27 @@
     </script>
 
     <script type="text/javascript">
+        function recount(tableInput)
+        {
+            var checkedAmount = 0;
+            var uncheckAmount = 0;
+            tableInput = tableInput
+            .data()
+            .filter(function(value, index){
+                if(value[1] == "Checked")
+                {
+                    console.log("YES" + index);
+                    checkedAmount++;
+                }
+                else
+                {
+                    uncheckAmount++;
+                }
+            })
+            ;
+            console.log(checkedAmount + " " + uncheckAmount);
+            document.getElementById("pageTitle").innerHTML = "PUAGCS Checked = " + checkedAmount + " Uncheck = " + uncheckAmount;
+        }
         function myFunction() {
 
         var input, filter, table, tr, td, i, txtValue;
@@ -246,7 +273,9 @@
                 buttons: [
                 'copy', 'csv', 'excel', 'pdf', 'print'
                 ]
-            });
+            }).on('draw', function() {
+                recount($(this).DataTable().rows({search:'applied'}));
+            } );
 
             $('#myTable2').DataTable({
                 dom: 'Bfrtip',
@@ -255,6 +284,7 @@
                 ]
             });
 
-        } );
+        } );;
+
   </script>
 </html>
