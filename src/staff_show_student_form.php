@@ -38,7 +38,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     </head>
 
-    <body class="container vh-100" style="background-image: url(pic/backgroundhome.png); background-size: cover;">
+    <body class="container vh-100" style="background-image: url(assets/img/backgroundhome.png); background-size: cover;">
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-2 shadow justify-content-between">
             <a class="btn btn-outline-secondary nav-item text-white" href="staff_for_student_form_page.php">Home</a>
             <a class="navbar-brand text-white">President University Graduation Automated Clearance System</a>
@@ -50,17 +50,17 @@
         </nav>
       
 
-        <div class="container-fluid card col-sm-12 text-center justify-content-center align-items-center shadow text-white" style="margin-top: 100px; margin-bottom: 100px; background-image: url(pic/background.png); background-size: cover;">
+        <div class="container-fluid card col-sm-12 text-center justify-content-center align-items-center shadow text-white" style="margin-top: 100px; margin-bottom: 100px; background-image: url(assets/img/background.png); background-size: cover;">
             <h2 class="text-center mt-3">Checklist the Student Activity</h2>
                 <div class="card-body table-responsive">
                     <form action="staff_submit_student_data.php" method="post">
                         <div class="row justify-content-center align-items-center">
                             <div class="text-center">
-                                <img src="pic/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 20%;">
+                                <img src="assets/img/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 20%;">
                                 <p class="text-center my-3">Passion . Responsibility . Entrepreneurial spirit . Sincerity . Inclusiveness . Dedication . Exellence . Nationalism . Trendsetter</p>
                             </div>
                         </div>
-                        <div class="card-header rounded" style="background-image: url(pic/bg.png);">
+                        <div class="card-header rounded" style="background-image: url(assets/img/bg.png);">
                             <div>
                                 <h1 class="text-center text-dark">Student Graduation Clearance Form</h1>
                             </div>

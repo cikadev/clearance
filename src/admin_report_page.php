@@ -34,7 +34,7 @@
         <!-- Latest compiled JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>            
         <script type="text/javascript" language="javascript" src="TableFilter/tablefilter.js"></script>  
-        <script src="js/jquery.tabledit.js"></script>
+        <script src="assets/js/jquery.tabledit.js"></script>
 
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
@@ -57,7 +57,7 @@
             </ul>
         </nav>
         <div class="container-fluid text-center" style="margin-top: -100px; position: absolute; z-index: 1;">
-            <img src="pic/rprt.png" style="width: 200px;">          
+            <img src="assets/img/rprt.png" style="width: 200px;">
         </div>
 
         <div class="container col-lg-10 shadow-lg rounded text-white pb-5" style="margin-top: 200px; position: relative; margin-bottom: 200px;">
@@ -66,12 +66,12 @@
             </div>
             <div class="row justify-content-center align-items-center">
                 <div class="text-center col-12">
-                    <img src="pic/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 10%;">
+                    <img src="assets/img/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 10%;">
                     <p class="text-center">Passion . Responsibility . Entrepreneurial spirit . Sincerity . Inclusiveness . Dedication . Exellence . Nationalism . Trendsetter</p>
                 </div>
                 <div class="text-center col-12">
                 </div>
-                <div class="container col-10 rounded my-3 align-content-center justify-content-center" style="background-image: url(pic/bg.png); background-size: cover;">
+                <div class="container col-10 rounded my-3 align-content-center justify-content-center" style="background-image: url(assets/img/bg.png); background-size: cover;">
                     <ul class="nav nav-tabs nav-justified align-content-center justify-content-center" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="stdrprt-tab" data-toggle="tab" href="#stdrprt" role="tab" aria-controls="stdrprt" aria-selected="true">Student Data Report</a>

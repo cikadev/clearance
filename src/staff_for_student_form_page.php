@@ -35,7 +35,7 @@
 
             <!-- TableFilter -->       
         <script type="text/javascript" language="javascript" src="TableFilter/tablefilter.js"></script>  
-        <script src="js/jquery.tabledit.js"></script>
+        <script src="assets/js/jquery.tabledit.js"></script>
 
         <style type="text/css">
             body, html {
@@ -44,7 +44,7 @@
             }
             .bg {
                 /* The image used */
-                background-image: url("pic/backgroundd.jpg");
+                background-image: url("src/assets/img/backgroundd.jpg");
 
                 /* Full height */
                 height: 100%; 
@@ -72,7 +72,7 @@
         
         
         <div class="row h-100 text-center justify-content-center align-items-center">
-            <div class="col-12 rounded" style="padding: 0px; background-image: url(pic/bg.png); background-position: center; background-size: cover;">
+            <div class="col-12 rounded" style="padding: 0px; background-image: url(assets/img/bg.png); background-position: center; background-size: cover;">
                 <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="input-tab" data-toggle="tab" href="#inputTab" role="tab" aria-controls="home" aria-selected="true">Input Student Data</a>
@@ -94,11 +94,11 @@
                         <form action="staff_submit_student_data.php" method="post" id="test"><br>
                             <div class="row justify-content-center align-items-center">
                                 <div class="text-center">
-                                    <img src="pic/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 20%;">
+                                    <img src="assets/img/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 20%;">
                                     <p class="text-center my-3">Passion . Responsibility . Entrepreneurial spirit . Sincerity . Inclusiveness . Dedication . Exellence . Nationalism . Trendsetter</p><br>
                                 </div>
                             </div>
-                            <div class="container text-center col-6 rounded mt-4" style="background-image: url(pic/background.png); background-size: cover;">
+                            <div class="container text-center col-6 rounded mt-4" style="background-image: url(assets/img/background.png); background-size: cover;">
                                 <div class="form-group">
                                     <label for="card_id"></label>
                                     <input type="text" placeholder="Tap Student ID Card" name="card_id" class="form-control mt-3" id="input1">

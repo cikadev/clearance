@@ -58,7 +58,7 @@
             }
             .bg {
                 /* The image used */
-                background-image: url("pic/backgroundhome.png");
+                background-image: url("src/assets/img/backgroundhome.png");
 
                 /* Full height */
                 height: 100%; 
@@ -84,16 +84,16 @@
         </nav>
 
         <div class="container text-center" style="margin-top: 120px; position: absolute; z-index: 1;">
-            <img class="rounded" src="pic/acc.png" style="width: 100px;">          
+            <img class="rounded" src="assets/img/acc.png" style="width: 100px;">
         </div>
 
         <div class="container-fluid h-100 card col-sm-10 text-center justify-content-center align-items-center bg-transparent" style="border: 0px;">
-            <div class="card-header shadow text-center text-white" style="background-image: url(pic/test.jpg); background-position: center;">
+            <div class="card-header shadow text-center text-white" style="background-image: url(assets/img/test.jpg); background-position: center;">
                 <div class="container-fluid mt-3">
                     <h1 class="font-weight-bold text-center" style="padding-top: 20px;"><?php echo "Welcome Back, ".$_SESSION['user_name'];  echo "!";?></h1>
                 </div>
             
-                <img src="pic/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 20%;">
+                <img src="assets/img/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 20%;">
                 <p>Passion . Responsibility . Entrepreneurial spirit . Sincerity . Inclusiveness . Dedication . Exellence . Nationalism . Trendsetter</p>
                 <h1>Activate Student ID Card</h1>
                 <div class="bg-danger">
