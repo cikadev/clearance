@@ -6,7 +6,7 @@
         echo "<script type='text/javascript'>alert('$message');</script>";
         header("Location: user_login_page.html");
     }
-    $sqlshow=$connection->prepare("SELECT * FROM tbl_list ORDER BY step");
+    $sqlshow=$connection->prepare("SELECT * FROM tbl_list");
     $sqlshow->execute();
     
 ?>
@@ -15,7 +15,6 @@
 	<head>
 		<title>PUGACS</title>
 		<meta charset="utf-8">
-		
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
 		<!-- Latest compiled and minified CSS -->
@@ -29,9 +28,9 @@
 
 		<!-- Latest compiled JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>            
-    	<script src="js/jquery.tabledit.js"></script>
+    	<script src="assets/js/jquery.tabledit.js"></script>
 	</head>
-	<body class="vh-100" style="background-color: #18318b">
+	<body class="vh-100" style="background-color: #d6cbd3">
 		<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-2 shadow justify-content-between">
             <a class="btn btn-outline-secondary nav-item text-white" href="admin_home.php">Home</a>
             <a class="navbar-brand text-white">President University Graduation Automated Clearance System</a>
@@ -42,24 +41,24 @@
             </ul>
         </nav>
         <div class="container-fluid text-center" style="margin-top: -100px; position: absolute; z-index: 1;">
-            <img class="rounded-circle shadow" src="pic/mnglist.png" style="width: 200px;">          
+            <img class="rounded-circle shadow" src="assets/img/mnglist.png" style="width: 200px;">
         </div>
 
-		<div class="container col-lg-10 shadow-lg rounded text-white" style="margin-top: 200px; position: relative; margin-bottom: 150px; background-image: url(pic/test.jpg); background-position: center; background-size: cover;">
+		<div class="container col-lg-10 shadow-lg rounded" style="margin-top: 200px; position: relative; margin-bottom: 150px;">
 			<div class="container-fluid" style="padding-top: 100px;">
 				<h1 class="font-weight-bold text-center" style="padding-top: 20px;"><?php echo "Welcome Back, ".$_SESSION['user_name'];  echo "!";?></h1>
 			</div>
-			<div class="row justify-content-center align-items-center" style="padding-bottom: 90px;">
+			<div class="row justify-content-center align-items-center">
 				<div class="text-center">
-					<img src="pic/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 10%;">
+					<img src="assets/img/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 10%;">
 					<p class="text-center">Passion . Responsibility . Entrepreneurial spirit . Sincerity . Inclusiveness . Dedication . Exellence . Nationalism . Trendsetter</p>
 			    </div>
 				<div class="col-10 rounded my-3 align-content-center justify-content-center text-center mb-5">
     				<h1 class="nav-link active" id="mngcf-tab" data-toggle="tab" href="#mngcf" role="tab" aria-controls="mngcf" aria-selected="true">Clearance Form List</h1>
   						
-					<div class="tab-content text-dark" id="myTabContent">
+					<div class="tab-content text-white" id="myTabContent">
   							<div class="row">
-	  							<div class="container col-3 span6 bg-white" style="padding-right:20px; border-right: 1px solid #ccc;">
+	  							<div class="container col-4 span6" style="padding-right:20px; border-right: 1px solid #ccc; background-color: #034f84;">
 	  								<h5 class="text-center my-3">Input New Activity</h5>
 					                <form class="text-center" action="admin_manage_list_add.php" method="post"><br>
 					                        <input class="form-control" type="text" name="activity" placeholder="Enter the new activity" value="">
@@ -69,7 +68,7 @@
 					                        
 					                </form>
 					            </div>
-					            <div class="container col-9 text-center bg-white">
+					            <div class="container col-8 text-center" style="background-color: #034f84">
 					            	<h5 class="text-center my-3">Graduation Clearance System Activity</h5>
 					            	<form action="admin_manage_list_update.php" method="post">
 					                    <table class="table table-bordered table-striped bg-white table-responsive">

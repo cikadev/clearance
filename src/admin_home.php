@@ -32,7 +32,7 @@
             }
             .bg {
                 /* The image used */
-                background-image: url("pic/backgroundd.jpg");
+                background-image: url("src/assets/img/backgroundd.jpg");
 
                 /* Full height */
                 height: 100%; 
@@ -60,7 +60,7 @@
 
         <div class="container text-center">
             <div>
-            <img src="pic/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 10%;">
+            <img src="assets/img/pulogo.png" class="img-fluid" alt="Responsive image" style="width: 10%;">
             <h5 class="text-center text-white">Passion . Responsibility . Entrepreneurial spirit . Sincerity . Inclusiveness . Dedication . Exellence . Nationalism . Trendsetter</h5>
             </div>
         </div>
@@ -70,7 +70,7 @@
                 
                 <div class="col-6">
                     <div class="container-fluid text-center" style="margin-top: 5px; z-index: 1;">
-                        <img class="rounded-circle shadow" src="pic/dashboard.png" style="width: 200px;">          
+                        <img class="rounded-circle shadow" src="assets/img/dashboard.png" style="width: 200px;">
                     </div>
                     <div class="container col-lg-12 shadow-lg rounded pb-1" style="margin-top: -100px; position: relative;">
                         <div class="text-center text-white" style="padding-top: 120px;">
@@ -116,7 +116,7 @@
                 </div>
                 <div class="col-6">
                     <div class="container-fluid text-center" style="margin-top: 5px; z-index: 1;">
-                        <img src="pic/report.png" style="width: 200px;">          
+                        <img src="assets/img/report.png" style="width: 200px;">
                     </div>
                     <div class="container col-lg-12 shadow-lg rounded pb-1" style="margin-top: -100px; position: relative;">
                         <div class="text-center text-white" style="padding-top: 120px;">

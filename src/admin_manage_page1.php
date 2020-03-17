@@ -53,16 +53,16 @@
             </ul>
         </nav>
         <div class="container-fluid text-center" style="margin-top: -100px; position: absolute; z-index: 1;">
-            <img class="rounded-circle shadow" src="pic/mnguser.png" style="width: 200px;">          
+            <img class="rounded-circle shadow" src="assets/img/mnguser.png" style="width: 200px;">
         </div>
 
-		<div class="container col-lg-10 shadow-lg rounded" style="margin-top: 200px; position: relative; margin-bottom: 150px; background-image: url(pic/background.png); background-position: center; background-repeat: no-repeat; background-size: cover;">
+		<div class="container col-lg-10 shadow-lg rounded" style="margin-top: 200px; position: relative; margin-bottom: 150px; background-image: url(assets/img/background.png); background-position: center; background-repeat: no-repeat; background-size: cover;">
 			<div class="container-fluid" style="padding-top: 100px;" >
 				<h1 class="font-weight-bold text-center text-white" style="padding-top: 20px;"><?php echo "Welcome Back, ".$_SESSION['user_name'];  echo "!";?></h1>
 			</div>
 			<div class="row justify-content-center align-items-center">
 				<div class="text-center">
-					<img src="pic/pulogo.png" class="img-fluid my-3" alt="Responsive image" style="width: 10%;">
+					<img src="assets/img/pulogo.png" class="img-fluid my-3" alt="Responsive image" style="width: 10%;">
 					<p class="text-center text-white">Passion . Responsibility . Entrepreneurial spirit . Sincerity . Inclusiveness . Dedication . Exellence . Nationalism . Trendsetter</p>
 			    </div>
 				<div class="col-10 rounded my-3 align-content-center justify-content-center">
@@ -290,7 +290,7 @@
 			</div>
 		</div>  			
 	</body>
-	<script type="text/javascript" src="jquery.tabledit.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery.tabledit.min.js"></script>
 	<script type="text/javascript">  
 	$(document).ready(function(){  
 		$('#editable_table').Tabledit({
