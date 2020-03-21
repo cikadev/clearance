@@ -1,6 +1,5 @@
 <template>
     <div>
-        <Header />
         <b-container>
             <b-form>
                 <b-form-group
@@ -27,16 +26,12 @@
 </template>
 
 <script>
-    import Header from "@/components/Header";
-    export default {
-        components: {
-            Header
-        },
-        data() {
-            return {
-                card_id: "",
-                toga_size: "",
-            };
-        }
+export default {
+    data() {
+        return {
+            card_id: "",
+            toga_size: "",
+        };
     }
+}
 </script>

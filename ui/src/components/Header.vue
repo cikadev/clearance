@@ -1,21 +1,28 @@
 <template>
     <div>
         <b-navbar toggleable="lg" type="dark" variant="dark">
-            <b-navbar-brand href="#">Clearance</b-navbar-brand>
+            <router-link :to="{ name: 'dashboard' }" class="navbar-brand">Clearance</router-link>
 
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
-                    <b-nav-item href="#">Reports</b-nav-item>
-                    <b-nav-item href="#">Activation</b-nav-item>
+                    <b-nav-item-dropdown>
+                        <template v-slot:button-content>
+                            Reports
+                        </template>
+                        <router-link :to="{ name: 'report-student' }" class="dropdown-item">Student</router-link>
+                    </b-nav-item-dropdown>
+                    <router-link :to="{ name: 'activation' }" class="nav-link">Activation</router-link>
+                    <router-link :to="{ name: 'activities' }" class="nav-link">Activities</router-link>
                 </b-navbar-nav>
 
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item-dropdown right>
                         <template v-slot:button-content>
-                            <em>User</em>
+                            User
                         </template>
+                        <router-link :to="{ name: 'settings' }" class="dropdown-item">Settings</router-link>
                         <b-dropdown-item href="#">Profile</b-dropdown-item>
                         <b-dropdown-item href="#">Sign Out</b-dropdown-item>
                     </b-nav-item-dropdown>

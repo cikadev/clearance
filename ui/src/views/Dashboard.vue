@@ -1,6 +1,5 @@
 <template>
     <div>
-        <Header />
         <b-container>
             <OverviewChartCompleted />
         </b-container>
@@ -8,10 +7,9 @@
 </template>
 
 <script>
-import Header from "@/components/Header";
 import OverviewChartCompleted from "@/components/OverviewChartCompleted.js";
 
 export default {
-    components: {OverviewChartCompleted, Header}
+    components: {OverviewChartCompleted}
 }
 </script>
