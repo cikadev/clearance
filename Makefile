@@ -1,0 +1,5 @@
+SERVE_ADDRESS=127.0.0.1
+SERVE_PORT=8081
+
+serve:
+	php -S $(SERVE_ADDRESS):$(SERVE_PORT) -t src
