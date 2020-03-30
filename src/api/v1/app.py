@@ -116,6 +116,31 @@ def department():
     
     return json.dumps(resultList)
 
+@app.route('/staff', methods=['POST'])
+def staff():
+  queryForCreate = "insert into tbl_user (user_id, user_name, user_email, user_password, dep_id, user_type)\
+ values ('" + request.args.get('id') + "', '" + request.args.get('name') + "', '" + request.args.get('email') + "', '"\
++ request.args.get('password') + "', " + request.args.get('department') + ", 'staff')"
 
+  mycursor.execute(queryForCreate)
+
+  mydb.commit()
+
+  queryForCheck = "SELECT tbl_user.user_id, tbl_user.user_name, tbl_dep.dep_name from tbl_user, tbl_dep\
+ where tbl_user.user_id = '" + request.args.get('id') + "' and tbl_user.dep_id = tbl_dep.dep_id"
+
+  mycursor.execute(queryForCheck)
+
+  result = mycursor.fetchall()
+  resultList = []
+  for data in result:
+    temp = {
+      "id" : data[0],
+      "name" : data[1],
+      "place" : data[2]
+    }
+    resultList.append(temp)
+  
+  return json.dumps(resultList)
 
 app.run()
