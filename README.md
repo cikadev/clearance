@@ -2,23 +2,22 @@
 
 ## Requirements
 
-- composer
-- Makefile (Optional)
+- Python 3
 
 ## Getting Started
 
 Setup the configuration in [.env](.env)
 
+(Optional) Setup and use virtual environment
+
 Install the dependencies
 
 ```
-composer update
+pip install -r requirements.txt
 ```
 
-Run the Makefile
+Run the website
 
 ```
-make
+python src/app.py
 ```
-
-The website is now run on 127.0.0.1:8081 (you can change this default behaviour in [Makefile](Makefile))
