@@ -4,39 +4,126 @@ from mysql.connector import errorcode
 import json
 from dotenv import load_dotenv
 import os
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 load_dotenv()
-    
 
 database_connection = mysql.connector.connect(
-    host = os.getenv("DATABASE_HOST"),
-    user = os.getenv("DATABASE_USERNAME"),
-    password = os.getenv("DATABASE_PASSWORD"),
-    database= os.getenv("DATABASE_NAME")
+    host=os.getenv("DATABASE_HOST"),
+    user=os.getenv("DATABASE_USERNAME"),
+    password=os.getenv("DATABASE_PASSWORD"),
+    database=os.getenv("DATABASE_NAME")
 )
-database_cursor = database_connection.cursor()
+database_cursor = database_connection.cursor(dictionary=True)
+
+
+class User(UserMixin):
+    def __init__(self, user_id):
+        self.id = user_id
+
+    @staticmethod
+    def get(user_id):
+        if user_id is None:
+            return None
+
+        database_cursor.execute(
+            "select count(*) from tbl_user \
+                where user_id = %(username)s",
+            {
+                "username": user_id,
+            }
+        )
+        number_of_user = database_cursor.fetchone()["count(*)"]
+        is_user_exists = number_of_user > 0
+
+        if is_user_exists:
+            user = User(user_id)
+            login_user(user)
+            return user
+        else:
+            return None
+
+    @staticmethod
+    def login(user_id, password):
+        database_cursor.execute(
+            "select count(*) from tbl_user \
+                where user_id = %(username)s and user_password = %(password)s",
+            {
+                "username": user_id,
+                "password": password,
+            }
+        )
+        number_of_user = database_cursor.fetchone()["count(*)"]
+        is_user_exists = number_of_user > 0
+
+        if is_user_exists:
+            user = User(user_id)
+            login_user(user)
+            return user
+        else:
+            return None
+
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
+app.config["SECRET_KEY"] = "bruh"
 
-@app.route('/api/v1/login', methods=['POST'])
+# Flask Login
+login_manager: LoginManager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return json.dumps({
+        "success": False,
+        "message": "Not authenticated"
+    }), 403
+
+# Routing
+@app.route("/api/v1/login", methods=["POST"])
 def login():
-
-    data_for_login = {
-        'username' : request.args.get('username')
-    }
-
-    query_for_login = "select user_id, user_password, user_type from puacs.tbl_user \
-    where user_id = %(username)s"
-    
-    database_cursor.execute(query_for_login, data_for_login)
-    
-    result = database_cursor.fetchall()
-    if result[0][1] == request.args.get('password'):
-        return "200 — Success login"
+    username = request.form.get("username")
+    password = request.form.get("password")
+    if User.login(username, password) is not None:
+        return json.dumps({
+            "success": True,
+            "message": "",
+        }), 200
     else:
-        return "403 — Invalid credential"
-  
+        return json.dumps({
+            "success": False,
+            "message": "Invalid credential"
+        }), 403
+
+
+@app.route("/api/v1/logout")
+@login_required
+def logout():
+    logout_user()
+    return json.dumps({
+        "success": True,
+        "message": "",
+    })
+
+
+@app.route("/api/v1/me")
+@login_required
+def me():
+    return json.dumps({
+        "success": True,
+        "message": "",
+        "data": {
+            "id": current_user.id
+        }
+    })
+
+
 @app.route('/api/v1/student/completeness', methods=['GET'])
 def student_completeness():
 
@@ -176,4 +263,6 @@ def staff():
     
     return json.dumps(result_in_list)
 
-app.run()
+
+if __name__ == "__main__":
+    app.run()
