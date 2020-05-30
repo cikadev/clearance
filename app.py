@@ -1,9 +1,13 @@
+from flask_admin.contrib.fileadmin import FileAdmin
+from flask_admin.menu import MenuLink
+
 import models
 
 from flask import Flask, request, url_for, redirect, abort
 from flask_admin import Admin, expose, BaseView
 from flask_security import SQLAlchemyUserDatastore, Security, current_user
 from flask_admin.contrib import sqla
+import os.path as osp
 
 app: Flask = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -16,18 +20,7 @@ security: Security = Security(app, user_datastore)
 
 class BaseModelView(sqla.ModelView):
     create_modal = True
-    form_widget_args = {
-        'created_at': {
-            'readonly': True,
-        },
-        'updated_at': {
-            'readonly': True,
-        },
-        'signed_by_user': {
-            'readonly': True,
-        }
-    }
-    form_excluded_columns = ("created_at", "updated_at")
+    form_excluded_columns = ("created_at", "updated_at", "signed_by_user")
 
     def is_has_sufficient_role(self):
         return True
@@ -42,6 +35,11 @@ class BaseModelView(sqla.ModelView):
             else:
                 return redirect(url_for("security.login", next=request.url))
         self.can_delete = current_user.role.lower() == "admin"
+
+    def on_model_change(self, form, model, is_created: bool):
+        if model is models.PUISStudentActivity:
+            if is_created:
+                model.signed_by_user_id = current_user.id
 
     # def create_form(self, obj=None):
     #     form = super().create_form(obj)
@@ -74,6 +72,21 @@ class ProfileView(BaseView):
         return self.render("profile.html")
 
 
+class AdminFileAdmin(FileAdmin):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role.lower() == "admin"
+
+
+class AuthenticatedMenuLink(MenuLink):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+
+class UnauthenticatedMenuLink(MenuLink):
+    def is_accessible(self):
+        return not current_user.is_authenticated
+
+
 admin: Admin = Admin(
     app,
     "Clearance Admin"
@@ -91,7 +104,13 @@ admin.add_view(GeneralModelView(models.PUISStudentActivity, models.db.session))
 admin.add_view(AdminModelView(models.PUISStudentStatus, models.db.session))
 admin.add_view(AdminModelView(models.TogaSize, models.db.session))
 
+path = osp.join(osp.dirname(__file__), "upload")
+admin.add_view(AdminFileAdmin(path, endpoint="/file/", name="Files"))
+
 admin.add_view(ProfileView(name="Profile", endpoint="profile"))
+
+admin.add_link(UnauthenticatedMenuLink(name="Login", endpoint="security.login"))
+admin.add_link(AuthenticatedMenuLink(name="Logout", endpoint="security.logout"))
 
 if __name__ == "__main__":
     app.run(debug=True)
