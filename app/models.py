@@ -6,22 +6,18 @@ from flask_sqlalchemy import SQLAlchemy
 db: SQLAlchemy = SQLAlchemy()
 
 
-class Type(db.Model, RoleMixin):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    type: Column = db.Column(db.String(255), unique=True, nullable=False)
+class Roles(db.Model, RoleMixin):
+    id: Column = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    role: Column = db.Column(db.String(255), unique=True, nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __str__(self):
-        return self.type
-
-    @property
-    def name(self):
-        return type
+        return self.role
 
 
 class Department(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
     name: Column = db.Column(db.String(255), nullable=False)
     location: Column = db.Column(db.String(255), nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
@@ -32,22 +28,23 @@ class Department(db.Model):
 
 
 class ActivityRequirement(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
     activity_id: Column = db.Column(db.Integer, db.ForeignKey("activity.id"), nullable=False)
     depends_on_activity_id: Column = db.Column(db.Integer, db.ForeignKey("activity.id"), nullable=False)
-    activity: Column = db.relationship("Activity", foreign_keys=[activity_id],
-                                       backref=db.backref("activity_requirement_activity", lazy="dynamic"))
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # FK data
+    activity: Column = db.relationship("Activity", foreign_keys=[activity_id],
+                                       backref=db.backref("activity_requirement_activity", lazy="dynamic"))
     depends_on_activity: Column = db.relationship("Activity", foreign_keys=[depends_on_activity_id],
                                                   backref=db.backref("activity_requirement_depends_on_activity",
                                                                      lazy="dynamic"))
 
 
 class Card(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
-    card: Column = db.Column(db.String(255), nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
+    card: Column = db.Column(db.String(255), unique=True, nullable=False)
     puis_student_id: Column = db.Column(db.Integer, db.ForeignKey("puis_student.id"), nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -59,7 +56,7 @@ class Card(db.Model):
 
 
 class Activity(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
     activity: Column = db.Column(db.String(255), nullable=False)
     department_id: Column = db.Column(db.Integer, db.ForeignKey("department.id"), nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
@@ -72,28 +69,29 @@ class Activity(db.Model):
 
 
 class TogaSize(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
-    toga_size: Column = db.Column(db.String(255), unique=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
+    size_name: Column = db.Column(db.String(255), unique=True, nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __str__(self):
-        return self.toga_size
+        return self.size_name
 
 
 class PUISStudent(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name: Column = db.Column(db.String(255), unique=True, nullable=False)
-    email: Column = db.Column(db.String(255), unique=True, nullable=False)
-    batch: Column = db.Column(db.String(255), unique=True, nullable=False)
-    date_of_birth: Column = db.Column(db.DateTime(), unique=True, nullable=False)
-    defense_date: Column = db.Column(db.DateTime(), unique=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
+    name: Column = db.Column(db.String(255), nullable=False)
+    email: Column = db.Column(db.String(255), nullable=False)
+    batch: Column = db.Column(db.String(255), nullable=False)
+    date_of_birth: Column = db.Column(db.Date(), nullable=False)
+    defense_date: Column = db.Column(db.Date(), nullable=False)
     prodi_id: Column = db.Column(db.Integer, db.ForeignKey("prodi.id"), nullable=False)
     puis_student_status_id: Column = db.Column(db.Integer, db.ForeignKey("puis_student_status.id"), nullable=False)
     toga_size_id: Column = db.Column(db.Integer, db.ForeignKey("toga_size.id"), nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # FK data
     puis_student_status: Column = db.relationship("PUISStudentStatus",
                                                   backref=db.backref("Student Status", lazy="dynamic"))
     prodi: Column = db.relationship("Prodi", backref=db.backref("Student Prodi", lazy="dynamic"))
@@ -104,52 +102,55 @@ class PUISStudent(db.Model):
 
 
 class PUISStudentActivity(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
     puis_student_id: Column = db.Column(db.Integer, db.ForeignKey("puis_student.id"), nullable=False)
-    puis_student: Column = db.relationship("PUISStudent", backref=db.backref("Completing Activity", lazy="dynamic"))
     activity_id: Column = db.Column(db.Integer, db.ForeignKey("activity.id"), nullable=False)
-    activity: Column = db.relationship("Activity", backref=db.backref("puis_student_activity_activity", lazy="dynamic"))
     signed_by_user_id: Column = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    signed_by_user: Column = db.relationship("User", backref=db.backref("puis_student_activity_user", lazy="dynamic"))
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # FK data
+    puis_student: Column = db.relationship("PUISStudent", backref=db.backref("Completing Activity", lazy="dynamic"))
+    activity: Column = db.relationship("Activity", backref=db.backref("puis_student_activity_activity", lazy="dynamic"))
+    signed_by_user: Column = db.relationship("User", backref=db.backref("puis_student_activity_user", lazy="dynamic"))
 
     def __str__(self):
         return str(self.activity)
 
 
 class PUISStudentStatus(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
-    puis_student_status: Column = db.Column(db.String(255), unique=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
+    status: Column = db.Column(db.String(255), unique=True, nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __str__(self):
-        return self.puis_student_status
+        return self.status
 
 
 class Prodi(db.Model):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
-    prodi: Column = db.Column(db.String(255), unique=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
+    name: Column = db.Column(db.String(255), unique=True, nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __str__(self):
-        return self.prodi
+        return self.name
 
 
 class User(db.Model, UserMixin):
-    id: Column = db.Column(db.Integer(), primary_key=True, nullable=False)
+    id: Column = db.Column(db.Integer(), primary_key=True)
     username: Column = db.Column(db.String(255), unique=True, nullable=False)
     email: Column = db.Column(db.String(255), unique=True, nullable=False)
     password: Column = db.Column(db.String(255), nullable=False)
     department_id: Column = db.Column(db.Integer, db.ForeignKey("department.id"), nullable=False)
-    type_id: Column = db.Column(db.Integer, db.ForeignKey("type.id"), nullable=False)
+    roles_id: Column = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # FK data
     department: Column = db.relationship("Department", backref=db.backref("user_department", lazy="dynamic"))
-    type: Column = db.relationship("Type", backref=db.backref("user_type", lazy="dynamic"))
+    role: Column = db.relationship("Roles", backref=db.backref("user_role", lazy="dynamic"))
 
     def __str__(self):
         return self.email
@@ -162,6 +163,5 @@ class User(db.Model, UserMixin):
     def active(self):
         return True
 
-    @property
-    def role(self):
-        return str(self.type)
+    def has_role(self, role):
+        return role in str(self.role)

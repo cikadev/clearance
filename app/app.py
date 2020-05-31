@@ -10,11 +10,11 @@ from flask_admin.contrib import sqla
 import os.path as osp
 
 app: Flask = Flask(__name__)
-app.config.from_pyfile("config.py")
+app.config.from_pyfile("../config.py")
 
 models.db.init_app(app)
 
-user_datastore: SQLAlchemyUserDatastore = SQLAlchemyUserDatastore(models.db, models.User, models.Type)
+user_datastore: SQLAlchemyUserDatastore = SQLAlchemyUserDatastore(models.db, models.User, models.Roles)
 security: Security = Security(app, user_datastore)
 
 
@@ -34,7 +34,7 @@ class BaseModelView(sqla.ModelView):
                 abort(403)
             else:
                 return redirect(url_for("security.login", next=request.url))
-        self.can_delete = current_user.role.lower() == "admin"
+        self.can_delete = current_user.has_role("admin")
 
     def on_model_change(self, form, model, is_created: bool):
         if model is models.PUISStudentActivity:
@@ -59,7 +59,7 @@ class BaseModelView(sqla.ModelView):
 
 class AdminModelView(BaseModelView):
     def is_has_sufficient_role(self):
-        return current_user.role.lower() == "admin"
+        return current_user.has_role("admin")
 
 
 class GeneralModelView(BaseModelView):
@@ -74,7 +74,7 @@ class ProfileView(BaseView):
 
 class AdminFileAdmin(FileAdmin):
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role.lower() == "admin"
+        return current_user.is_authenticated and current_user.has_role("admin")
 
 
 class AuthenticatedMenuLink(MenuLink):
@@ -93,7 +93,7 @@ admin: Admin = Admin(
 )
 
 admin.add_view(AdminModelView(models.User, models.db.session))
-admin.add_view(AdminModelView(models.Type, models.db.session))
+admin.add_view(AdminModelView(models.Roles, models.db.session))
 admin.add_view(AdminModelView(models.Department, models.db.session))
 admin.add_view(AdminModelView(models.Activity, models.db.session))
 admin.add_view(AdminModelView(models.ActivityRequirement, models.db.session))
