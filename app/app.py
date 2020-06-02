@@ -39,9 +39,11 @@ class BaseModelView(sqla.ModelView):
         self.can_delete = current_user.has_role("admin")
 
     def on_model_change(self, form, model, is_created: bool):
-        if model is models.PUISStudentActivity:
+        if isinstance(model, models.PUISStudentActivity):
             if is_created:
                 model.signed_by_user_id = current_user.id
+            if not models.PUISStudentActivity.can_user_take_activity(model.puis_student.id, model.activity.id):
+                raise Exception("User must complete the previous activity")
 
     # def create_form(self, obj=None):
     #     form = super().create_form(obj)
@@ -89,6 +91,13 @@ class UnauthenticatedMenuLink(MenuLink):
         return not current_user.is_authenticated
 
 
+class PUISStudentModelView(AdminModelView):
+    column_searchable_list = ("student_id", "name")
+
+class CardModelView(GeneralModelView):
+    column_searchable_list = ("card",)
+
+
 client_blueprint = Blueprint("Client", "Client")
 
 
@@ -124,11 +133,12 @@ admin.add_view(AdminModelView(models.Department, models.db.session))
 admin.add_view(AdminModelView(models.Activity, models.db.session))
 admin.add_view(AdminModelView(models.ActivityRequirement, models.db.session))
 admin.add_view(AdminModelView(models.Prodi, models.db.session))
-admin.add_view(GeneralModelView(models.Card, models.db.session))
-admin.add_view(AdminModelView(models.PUISStudent, models.db.session))
-admin.add_view(GeneralModelView(models.PUISStudentActivity, models.db.session))
+admin.add_view(PUISStudentModelView(models.PUISStudent, models.db.session))
 admin.add_view(AdminModelView(models.PUISStudentStatus, models.db.session))
 admin.add_view(AdminModelView(models.TogaSize, models.db.session))
+
+admin.add_view(GeneralModelView(models.PUISStudentActivity, models.db.session))
+admin.add_view(CardModelView(models.Card, models.db.session))
 
 path = osp.join(osp.dirname(__file__), "upload")
 admin.add_view(AdminFileAdmin(path, endpoint="/file/", name="Files"))

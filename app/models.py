@@ -122,6 +122,16 @@ class PUISStudentActivity(db.Model):
     def __str__(self):
         return str(self.activity)
 
+    @staticmethod
+    def can_user_take_activity(puis_student_id, activity_id):
+        activity_requirement: ActivityRequirement = ActivityRequirement.query.filter_by(activity_id=activity_id).first()
+        if activity_requirement is None:
+            return True
+
+        return PUISStudentActivity.query.filter_by(
+            activity_id=activity_requirement.depends_on_activity_id,
+            puis_student_id=puis_student_id).first() is not None
+
 
 class PUISStudentStatus(db.Model):
     id: Column = db.Column(db.Integer(), primary_key=True)
