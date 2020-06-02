@@ -1,9 +1,11 @@
+import json
+
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.menu import MenuLink
 
 import models
 
-from flask import Flask, request, url_for, redirect, abort
+from flask import Flask, request, url_for, redirect, abort, Blueprint
 from flask_admin import Admin, expose, BaseView
 from flask_security import SQLAlchemyUserDatastore, Security, current_user
 from flask_admin.contrib import sqla
@@ -86,6 +88,30 @@ class UnauthenticatedMenuLink(MenuLink):
     def is_accessible(self):
         return not current_user.is_authenticated
 
+
+client_blueprint = Blueprint("Client", "Client")
+
+
+@client_blueprint.route("/api/v1/student/<student_id>")
+def student(student_id):
+    student = models.PUISStudent.get_where_student_id(student_id)
+    if student is None:
+        return json.dumps({
+            "student_id": student_id,
+            "success": False,
+            "error": "No user found",
+            "data": {},
+        })
+
+    return json.dumps({
+        "student_id": student_id,
+        "sucess": True,
+        "error": "",
+        "data": {},
+    })
+
+
+app.register_blueprint(client_blueprint)
 
 admin: Admin = Admin(
     app,

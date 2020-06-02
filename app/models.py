@@ -80,6 +80,7 @@ class TogaSize(db.Model):
 
 class PUISStudent(db.Model):
     id: Column = db.Column(db.Integer(), primary_key=True)
+    student_id: Column = db.Column(db.String(255), unique=True, nullable=False)
     name: Column = db.Column(db.String(255), nullable=False)
     email: Column = db.Column(db.String(255), nullable=False)
     batch: Column = db.Column(db.String(255), nullable=False)
@@ -98,7 +99,11 @@ class PUISStudent(db.Model):
     toga_size: Column = db.relationship("TogaSize", backref=db.backref("Student Toga Size", lazy="dynamic"))
 
     def __str__(self):
-        return self.name
+        return f"{self.student_id} {self.name}"
+
+    @staticmethod
+    def get_where_student_id(student_id):
+        return PUISStudent.query.filter_by(student_id=student_id).first()
 
 
 class PUISStudentActivity(db.Model):
