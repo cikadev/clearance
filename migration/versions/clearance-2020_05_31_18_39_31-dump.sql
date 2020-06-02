@@ -1,6 +1,6 @@
 -- MariaDB dump 10.17  Distrib 10.4.13-MariaDB, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: clearance2
+-- Host: localhost    Database: clearance3
 -- ------------------------------------------------------
 -- Server version	10.4.13-MariaDB
 
@@ -73,6 +73,29 @@ LOCK TABLES `activity_requirement` WRITE;
 /*!40000 ALTER TABLE `activity_requirement` DISABLE KEYS */;
 INSERT INTO `activity_requirement` VALUES (1,2,1,'2020-05-20 00:00:00','2020-05-19 17:00:00'),(2,3,2,'2020-05-20 00:00:00','2020-05-19 17:00:00');
 /*!40000 ALTER TABLE `activity_requirement` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `alembic_version`
+--
+
+DROP TABLE IF EXISTS `alembic_version`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alembic_version` (
+  `version_num` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`version_num`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `alembic_version`
+--
+
+LOCK TABLES `alembic_version` WRITE;
+/*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
+INSERT INTO `alembic_version` VALUES ('edbab2aaeb8f');
+/*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -240,7 +263,9 @@ CREATE TABLE `puis_student` (
   `toga_size_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `student_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `puis_student_student_id_uindex` (`student_id`),
   KEY `puis_student_prodi_id_fk` (`prodi_id`),
   KEY `puis_student_puis_student_status_id_fk` (`puis_student_status_id`),
   KEY `puis_student_toga_size_id_fk` (`toga_size_id`),
@@ -256,7 +281,7 @@ CREATE TABLE `puis_student` (
 
 LOCK TABLES `puis_student` WRITE;
 /*!40000 ALTER TABLE `puis_student` DISABLE KEYS */;
-INSERT INTO `puis_student` VALUES (1,'I Made Primayana Martha','primamartha@gmail.com',2013,'1995-11-09','2018-07-01',1,1,2,'2020-05-20 00:00:00','2020-05-19 17:00:00'),(2,'Alpinta Harjanto','primamartha@gmail.com',2014,'1996-06-25','2018-05-12',2,2,2,'2020-05-20 00:00:00','2020-05-19 17:00:00'),(3,'Andre Leo','andreleo2604@gmail.com',2014,'1996-04-26','2020-01-06',3,2,2,'2020-05-20 00:00:00','2020-05-19 17:00:00');
+INSERT INTO `puis_student` VALUES (1,'I Made Primayana Martha','primamartha@gmail.com',2013,'1995-11-09','2018-07-01',1,1,2,'2020-05-20 00:00:00','2020-06-01 10:32:37','001'),(2,'Alpinta Harjanto','primamartha@gmail.com',2014,'1996-06-25','2018-05-12',2,2,2,'2020-05-20 00:00:00','2020-06-01 10:32:37','002'),(3,'Andre Leo','andreleo2604@gmail.com',2014,'1996-04-26','2020-01-06',3,2,2,'2020-05-20 00:00:00','2020-06-01 10:32:37','003');
 /*!40000 ALTER TABLE `puis_student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,4 +443,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-31 18:39:31
+-- Dump completed on 2020-06-02 10:26:35
