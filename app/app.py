@@ -5,7 +5,7 @@ from flask_admin.menu import MenuLink
 
 import models
 
-from flask import Flask, request, url_for, redirect, abort, Blueprint
+from flask import Flask, request, url_for, redirect, abort, Blueprint, render_template
 from flask_admin import Admin, expose, BaseView
 from flask_security import SQLAlchemyUserDatastore, Security, current_user
 from flask_admin.contrib import sqla
@@ -75,6 +75,10 @@ class ProfileView(BaseView):
     def index(self):
         return self.render("profile.html")
 
+    @expose("/changepassword", methods=("POST", "GET"))
+    def password(self):
+        return json.dumps({})
+
 
 class AdminFileAdmin(FileAdmin):
     def is_accessible(self):
@@ -100,23 +104,31 @@ class CardModelView(GeneralModelView):
 
 client_blueprint = Blueprint("Client", "Client")
 
+@client_blueprint.route("/")
+def index():
+    return render_template("client/home.html")
 
 @client_blueprint.route("/api/v1/student/<student_id>")
 def student(student_id):
-    student = models.PUISStudent.get_where_student_id(student_id)
-    if student is None:
-        return json.dumps({
-            "student_id": student_id,
-            "success": False,
-            "error": "No user found",
-            "data": {},
-        })
+    student: models.PUISStudent = models.PUISStudent.get_where_student_id(student_id)
+    success: bool = False
+    error_msg: str = "No user found"
+    data: dict = {}
+
+    if student is not None:
+        success = True
+        error_msg = ""
+        activity_done_by_student: [models.PUISStudentActivity] = models.PUISStudentActivity.get_where_student_has_id(student.id)
+        activity_done_by_student_json: [dict] = list(map(lambda o: o.to_dict(), activity_done_by_student))
+        data = {
+            "activies_done": activity_done_by_student_json,
+        }
 
     return json.dumps({
         "student_id": student_id,
-        "sucess": True,
-        "error": "",
-        "data": {},
+        "sucess": success,
+        "error": error_msg,
+        "data": data,
     })
 
 
