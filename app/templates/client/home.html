@@ -22,7 +22,7 @@
 
 <div class="container">
     <div class="m-3 row justify-content-center">
-        <div class="col-6">
+        <div class="col-lg-6">
             <form>
                 <div class="form-group">
                     <label for="student-id">Student ID</label>
@@ -32,7 +32,16 @@
             </form>
 
             <div class="alert alert-primary invisible mb-4 mt-4" id="info-alert" role="alert">
-                A simple primary alert—check it out!
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Activity</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                    </thead>
+                    <tbody id="info-table-body">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -53,6 +62,7 @@
     const form_button = document.querySelector("#get-info-button");
     const form_input = document.querySelector("#student-id");
     const form_alert = document.querySelector("#info-alert");
+    const info_table_body = document.querySelector("#info-table-body");
 
     form_input.addEventListener("input", _ => {
         form_button.disabled = form_input.value.length === 0;
@@ -76,12 +86,20 @@
         fetch(`/api/v1/student/${form_input.value}`)
             .then(json => json.json())
             .then(data => {
-                if (data.success)
-                {
+                if (data.success) {
+                    let tableRows = "";
+                    const tableColor = ["primary", "secondary", "info", "light"];
+                    let tableColorNth = 0;
+                    console.log(data.data.activities_done);
+                    data.data.activities_done.forEach(activity => {
+                        tableRows += `<tr class="table-${tableColor[tableColorNth++ % tableColor.length]}">
+                            <th scope="row">${activity.activity.activity}</th>
+                            <td>${activity.created_at}</td>
+                        </tr>`;
+                    });
 
-                }
-                else
-                {
+                    info_table_body.innerHTML = tableRows;
+                } else {
 
                 }
             })

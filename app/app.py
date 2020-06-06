@@ -121,12 +121,12 @@ def student(student_id):
         activity_done_by_student: [models.PUISStudentActivity] = models.PUISStudentActivity.get_where_student_has_id(student.id)
         activity_done_by_student_json: [dict] = list(map(lambda o: o.to_dict(), activity_done_by_student))
         data = {
-            "activies_done": activity_done_by_student_json,
+            "activities_done": activity_done_by_student_json,
         }
 
     return json.dumps({
         "student_id": student_id,
-        "sucess": success,
+        "success": success,
         "error": error_msg,
         "data": data,
     })

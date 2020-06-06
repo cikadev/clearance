@@ -138,9 +138,18 @@ class PUISStudentActivity(db.Model):
 
     def to_dict(self):
         data = self.__dict__
-        del data["_sa_instance_state"]
         for k in ("created_at", "updated_at"):
             data[k] = str(data[k])
+
+        data["activity"] = self.activity.__dict__
+        for k in ("created_at", "updated_at"):
+            data["activity"][k] = str(data["activity"][k])
+
+        if "_sa_instance_state" in data["activity"]:
+            del data["activity"]["_sa_instance_state"]
+        if "_sa_instance_state" in data:
+            del data["_sa_instance_state"]
+
         return data
 
 
