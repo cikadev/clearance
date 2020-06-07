@@ -180,3 +180,9 @@ class User(db.Model, UserMixin):
 
     def has_role(self, role):
         return role in str(self.role)
+
+    @staticmethod
+    def get_where_user_id(user_id):
+        return User.query.filter_by(id=user_id).first()
+
+    

@@ -1,3 +1,5 @@
+from flaskext.mysql import MySQL
+
 import json
 
 from flask_admin.contrib.fileadmin import FileAdmin
@@ -71,9 +73,14 @@ class GeneralModelView(BaseModelView):
 
 
 class ProfileView(BaseView):
-    @expose("/")
+    @expose("/", methods=['GET', 'POST'])
     def index(self):
-        return self.render("profile.html")
+        if request.method == "POST":
+            if request.form["new_password"] == request.form["confirm_password"]:
+                current_user.password = request.form["confirm_password"]
+                models.db.session.commit()
+        return self.render("profile.html", user = current_user)
+
 
 
 class AdminFileAdmin(FileAdmin):
