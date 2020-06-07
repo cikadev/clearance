@@ -123,6 +123,10 @@ class PUISStudentActivity(db.Model):
         return str(self.activity)
 
     @staticmethod
+    def get_where_student_has_id(id):
+        return PUISStudentActivity.query.filter_by(puis_student_id=id).all()
+
+    @staticmethod
     def can_user_take_activity(puis_student_id, activity_id):
         activity_requirement: ActivityRequirement = ActivityRequirement.query.filter_by(activity_id=activity_id).first()
         if activity_requirement is None:
@@ -131,6 +135,22 @@ class PUISStudentActivity(db.Model):
         return PUISStudentActivity.query.filter_by(
             activity_id=activity_requirement.depends_on_activity_id,
             puis_student_id=puis_student_id).first() is not None
+
+    def to_dict(self):
+        data = self.__dict__
+        for k in ("created_at", "updated_at"):
+            data[k] = str(data[k])
+
+        data["activity"] = self.activity.__dict__
+        for k in ("created_at", "updated_at"):
+            data["activity"][k] = str(data["activity"][k])
+
+        if "_sa_instance_state" in data["activity"]:
+            del data["activity"]["_sa_instance_state"]
+        if "_sa_instance_state" in data:
+            del data["_sa_instance_state"]
+
+        return data
 
 
 class PUISStudentStatus(db.Model):
