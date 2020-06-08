@@ -74,17 +74,12 @@ class GeneralModelView(BaseModelView):
 
 class ProfileView(BaseView):
     @expose("/", methods=['GET', 'POST'])
-    def index(self):
+    def change_password(self):
         if request.method == "POST":
             if request.form["new_password"] == request.form["confirm_password"]:
                 current_user.password = request.form["confirm_password"]
                 models.db.session.commit()
         return self.render("profile.html", user = current_user)
-
-
-    @expose("/changepassword", methods=("POST", "GET"))
-    def password(self):
-        return json.dumps({})
 
 
 class AdminFileAdmin(FileAdmin):
