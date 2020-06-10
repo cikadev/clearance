@@ -79,7 +79,13 @@ class ProfileView(BaseView):
             if request.form["new_password"] == request.form["confirm_password"]:
                 current_user.password = request.form["confirm_password"]
                 models.db.session.commit()
-        return self.render("profile.html", user = current_user)
+        return self.render("profile.html", user=current_user)
+
+    def is_has_sufficient_role(self):
+        return True
+
+    def is_accessible(self):
+        return current_user.is_authenticated and self.is_has_sufficient_role()
 
 
 class AdminFileAdmin(FileAdmin):
@@ -100,15 +106,18 @@ class UnauthenticatedMenuLink(MenuLink):
 class PUISStudentModelView(AdminModelView):
     column_searchable_list = ("student_id", "name")
 
+
 class CardModelView(GeneralModelView):
     column_searchable_list = ("card",)
 
 
 client_blueprint = Blueprint("Client", "Client")
 
+
 @client_blueprint.route("/")
 def index():
     return render_template("client/home.html")
+
 
 @client_blueprint.route("/api/v1/student/<student_id>")
 def student(student_id):
@@ -141,22 +150,28 @@ admin: Admin = Admin(
     "Clearance Admin"
 )
 
-admin.add_view(AdminModelView(models.User, models.db.session))
-admin.add_view(AdminModelView(models.Roles, models.db.session))
-admin.add_view(AdminModelView(models.Department, models.db.session))
-admin.add_view(AdminModelView(models.Activity, models.db.session))
-admin.add_view(AdminModelView(models.ActivityRequirement, models.db.session))
-admin.add_view(AdminModelView(models.Prodi, models.db.session))
-admin.add_view(PUISStudentModelView(models.PUISStudent, models.db.session))
-admin.add_view(AdminModelView(models.PUISStudentStatus, models.db.session))
-admin.add_view(AdminModelView(models.TogaSize, models.db.session))
+# Students
+admin.add_view(PUISStudentModelView(models.PUISStudent, models.db.session, category="Student"))
+admin.add_view(GeneralModelView(models.PUISStudentActivity, models.db.session, category="Student"))
+admin.add_view(CardModelView(models.Card, models.db.session, category="Student"))
 
-admin.add_view(GeneralModelView(models.PUISStudentActivity, models.db.session))
-admin.add_view(CardModelView(models.Card, models.db.session))
+# Configuration
+admin.add_view(AdminModelView(models.Activity, models.db.session, category="Configuration"))
+admin.add_view(AdminModelView(models.ActivityRequirement, models.db.session, category="Configuration"))
+admin.add_view(AdminModelView(models.Prodi, models.db.session, category="Configuration"))
+admin.add_view(AdminModelView(models.TogaSize, models.db.session, category="Configuration"))
+admin.add_view(AdminModelView(models.PUISStudentStatus, models.db.session, category="Configuration"))
 
+# System
+admin.add_view(AdminModelView(models.User, models.db.session, category="System"))
+admin.add_view(AdminModelView(models.Roles, models.db.session, category="System"))
+admin.add_view(AdminModelView(models.Department, models.db.session, category="System"))
+
+# Miscellaneous
 path = osp.join(osp.dirname(__file__), "upload")
-admin.add_view(AdminFileAdmin(path, endpoint="/file/", name="Files"))
+admin.add_view(AdminFileAdmin(path, endpoint="/file/", name="Files", category="Miscellaneous"))
 
+# --
 admin.add_view(ProfileView(name="Profile", endpoint="profile"))
 
 admin.add_link(UnauthenticatedMenuLink(name="Login", endpoint="security.login"))
