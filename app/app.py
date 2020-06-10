@@ -79,7 +79,7 @@ class ProfileView(BaseView):
             if request.form["new_password"] == request.form["confirm_password"]:
                 current_user.password = request.form["confirm_password"]
                 models.db.session.commit()
-        return self.render("profile.html", user=current_user)
+        return self.render("admin/profile.html", user=current_user)
 
     def is_has_sufficient_role(self):
         return True

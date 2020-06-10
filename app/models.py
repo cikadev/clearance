@@ -8,12 +8,13 @@ db: SQLAlchemy = SQLAlchemy()
 
 class Roles(db.Model, RoleMixin):
     id: Column = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    role: Column = db.Column(db.String(255), unique=True, nullable=False)
+    name: Column = db.Column(db.String(255), unique=True, nullable=False)
+    # description: Column = db.Column(db.String(255))
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __str__(self):
-        return self.role
+        return self.name
 
 
 class Department(db.Model):
@@ -62,7 +63,7 @@ class Activity(db.Model):
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    department: Column = db.relationship("Department", backref=db.backref("activity_department", lazy="dynamic"))
+    department: Column = db.relationship("Department", backref=db.backref("activities_with_department", lazy="dynamic"))
 
     def __str__(self):
         return self.activity
@@ -184,8 +185,8 @@ class User(db.Model, UserMixin):
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # FK data
-    department: Column = db.relationship("Department", backref=db.backref("user_department", lazy="dynamic"))
-    role: Column = db.relationship("Roles", backref=db.backref("user_role", lazy="dynamic"))
+    department: Column = db.relationship("Department", backref=db.backref("user_with_department", lazy="dynamic"))
+    role: Column = db.relationship("Roles", backref=db.backref("users_with_role", lazy="dynamic"))
 
     def __str__(self):
         return self.email
