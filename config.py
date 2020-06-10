@@ -6,7 +6,7 @@ SECRET_KEY = '123456790'
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE_FILE
 
 # For now, we're using MySQL
-SQLALCHEMY_DATABASE_URI = "mysql://root:pwd4suser@localhost/graduation"
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://clearance_user:@localhost/clearance_dev"
 # Print underlying SQL
 SQLALCHEMY_ECHO = False
 
