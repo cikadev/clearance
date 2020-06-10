@@ -8,12 +8,12 @@ db: SQLAlchemy = SQLAlchemy()
 
 class Roles(db.Model, RoleMixin):
     id: Column = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    role: Column = db.Column(db.String(255), unique=True, nullable=False)
+    name: Column = db.Column(db.String(255), unique=True, nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __str__(self):
-        return self.role
+        return self.name
 
 
 class Department(db.Model):
