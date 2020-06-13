@@ -1,5 +1,3 @@
-from flaskext.mysql import MySQL
-
 import json
 
 from flask_admin.contrib.fileadmin import FileAdmin
@@ -20,6 +18,8 @@ models.db.init_app(app)
 
 user_datastore: SQLAlchemyUserDatastore = SQLAlchemyUserDatastore(models.db, models.User, models.Roles)
 security: Security = Security(app, user_datastore)
+
+TOGA_ACTIVITY_ID = 4
 
 
 class BaseModelView(sqla.ModelView):
@@ -42,10 +42,30 @@ class BaseModelView(sqla.ModelView):
 
     def on_model_change(self, form, model, is_created: bool):
         if isinstance(model, models.PUISStudentActivity):
+            if model.activity.id == TOGA_ACTIVITY_ID:
+                raise Exception("Please use PUISStudentTogaSize menu")
+
             if is_created:
                 model.signed_by_user_id = current_user.id
+
             if not models.PUISStudentActivity.can_user_take_activity(model.puis_student.id, model.activity.id):
                 raise Exception("User must complete the previous activity")
+
+    def on_model_delete(self, model):
+        if isinstance(model, models.PUISStudentActivity):
+            if model.activity.id == TOGA_ACTIVITY_ID:
+                puis_student_activity_toga_size = models.PUISStudentTogaSize.query.filter_by(
+                    puis_student_id=model.puis_student.id).first()
+                if puis_student_activity_toga_size is not None:
+                    models.db.session.delete(puis_student_activity_toga_size)
+                    models.db.session.commit()
+        elif isinstance(model, models.PUISStudentTogaSize):
+            puis_student_activity = models.PUISStudentActivity.query.filter_by(
+                puis_student_id=model.puis_student.id,
+                activity_id=TOGA_ACTIVITY_ID).first()
+            if puis_student_activity is not None:
+                models.db.session.delete(puis_student_activity)
+                models.db.session.commit()
 
     # def create_form(self, obj=None):
     #     form = super().create_form(obj)
@@ -70,6 +90,30 @@ class AdminModelView(BaseModelView):
 
 class GeneralModelView(BaseModelView):
     pass
+
+
+class PUISStudentTogaSizeViewModel(BaseModelView):
+    def on_model_change(self, form, model, is_created: bool):
+        if isinstance(model, models.PUISStudentTogaSize):
+            if is_created:
+                if not models.PUISStudentActivity.can_user_take_activity(model.puis_student.id, TOGA_ACTIVITY_ID):
+                    raise Exception("User must complete the previous activity")
+
+                puis_student_activity = models.PUISStudentActivity()
+                puis_student_activity.puis_student_id = model.puis_student.id
+                puis_student_activity.activity_id = TOGA_ACTIVITY_ID
+                puis_student_activity.signed_by_user_id = current_user.id
+                puis_student_activity.description = f"Toga with size {model.toga_size.size_name}"
+                models.db.session.add(puis_student_activity)
+                models.db.session.commit()
+            else:
+                puis_student_activity = models.PUISStudentActivity.where_student_id_and_activity_id_is(
+                    model.puis_student.id, TOGA_ACTIVITY_ID)
+                puis_student_activity.puis_student_id = model.puis_student.id
+                puis_student_activity.signed_by_user_id = current_user.id
+                puis_student_activity.description = f"Toga with size {model.toga_size.size_name}"
+                models.db.session.add(puis_student_activity)
+                models.db.session.commit()
 
 
 class ProfileView(BaseView):
@@ -129,7 +173,8 @@ def student(student_id):
     if student is not None:
         success = True
         error_msg = ""
-        activity_done_by_student: [models.PUISStudentActivity] = models.PUISStudentActivity.get_where_student_has_id(student.id)
+        activity_done_by_student: [models.PUISStudentActivity] = models.PUISStudentActivity.get_where_student_has_id(
+            student.id)
         activity_done_by_student_json: [dict] = list(map(lambda o: o.to_dict(), activity_done_by_student))
         data = {
             "activities_done": activity_done_by_student_json,
@@ -154,6 +199,7 @@ admin: Admin = Admin(
 admin.add_view(PUISStudentModelView(models.PUISStudent, models.db.session, category="Student"))
 admin.add_view(GeneralModelView(models.PUISStudentActivity, models.db.session, category="Student"))
 admin.add_view(CardModelView(models.Card, models.db.session, category="Student"))
+admin.add_view(PUISStudentTogaSizeViewModel(models.PUISStudentTogaSize, models.db.session, category="Student"))
 
 # Configuration
 admin.add_view(AdminModelView(models.Activity, models.db.session, category="Configuration"))

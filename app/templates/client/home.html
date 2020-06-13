@@ -88,7 +88,6 @@
                     let tableRows = "";
                     const tableColor = ["primary", "secondary", "info", "light"];
                     let tableColorNth = 0;
-                    console.log(data.data.activities_done);
                     data.data.activities_done.forEach(activity => {
                         tableRows += `<tr class="table-${tableColor[tableColorNth++ % tableColor.length]}">
                             <th scope="row">${activity.activity.activity}</th>
@@ -98,10 +97,11 @@
 
                     info_table_body.innerHTML = tableRows;
                 } else {
-
+                    // error("Can't parse data");
                 }
             })
             .catch(() => {
+                // error("Can't connect to the source");
             })
             .finally(_ => {
                 loading(false);

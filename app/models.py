@@ -42,6 +42,9 @@ class ActivityRequirement(db.Model):
                                                   backref=db.backref("activity_requirement_depends_on_activity",
                                                                      lazy="dynamic"))
 
+    def __str__(self):
+        return str(self.activity)
+
 
 class Card(db.Model):
     id: Column = db.Column(db.Integer(), primary_key=True)
@@ -89,7 +92,6 @@ class PUISStudent(db.Model):
     defense_date: Column = db.Column(db.Date(), nullable=False)
     prodi_id: Column = db.Column(db.Integer, db.ForeignKey("prodi.id"), nullable=False)
     puis_student_status_id: Column = db.Column(db.Integer, db.ForeignKey("puis_student_status.id"), nullable=False)
-    toga_size_id: Column = db.Column(db.Integer, db.ForeignKey("toga_size.id"), nullable=False)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -97,7 +99,6 @@ class PUISStudent(db.Model):
     puis_student_status: Column = db.relationship("PUISStudentStatus",
                                                   backref=db.backref("Student Status", lazy="dynamic"))
     prodi: Column = db.relationship("Prodi", backref=db.backref("Student Prodi", lazy="dynamic"))
-    toga_size: Column = db.relationship("TogaSize", backref=db.backref("Student Toga Size", lazy="dynamic"))
 
     def __str__(self):
         return f"{self.student_id} {self.name}"
@@ -112,6 +113,7 @@ class PUISStudentActivity(db.Model):
     puis_student_id: Column = db.Column(db.Integer, db.ForeignKey("puis_student.id"), nullable=False)
     activity_id: Column = db.Column(db.Integer, db.ForeignKey("activity.id"), nullable=False)
     signed_by_user_id: Column = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    description: Column = db.Column(db.Text, nullable=True)
     created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -133,9 +135,15 @@ class PUISStudentActivity(db.Model):
         if activity_requirement is None:
             return True
 
+        return PUISStudentActivity.where_student_id_and_activity_id_is(
+            puis_student_id, activity_requirement.depends_on_activity_id
+        ) is not None
+
+    @staticmethod
+    def where_student_id_and_activity_id_is(student_id, activity_id):
         return PUISStudentActivity.query.filter_by(
-            activity_id=activity_requirement.depends_on_activity_id,
-            puis_student_id=puis_student_id).first() is not None
+            activity_id=activity_id,
+            puis_student_id=student_id).first()
 
     def to_dict(self):
         data = self.__dict__
@@ -152,6 +160,18 @@ class PUISStudentActivity(db.Model):
             del data["_sa_instance_state"]
 
         return data
+
+
+class PUISStudentTogaSize(db.Model):
+    id: Column = db.Column(db.Integer(), primary_key=True)
+    puis_student_id: Column = db.Column(db.Integer, db.ForeignKey("puis_student.id"), unique=True, nullable=False)
+    toga_size_id: Column = db.Column(db.Integer, db.ForeignKey("toga_size.id"), nullable=False)
+    created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
+    updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # FK data
+    puis_student: Column = db.relationship("PUISStudent", backref=db.backref("PUIS Student", lazy="dynamic"))
+    toga_size: Column = db.relationship("TogaSize", backref=db.backref("Toga Size", lazy="dynamic"))
 
 
 class PUISStudentStatus(db.Model):
@@ -205,5 +225,3 @@ class User(db.Model, UserMixin):
     @staticmethod
     def get_where_user_id(user_id):
         return User.query.filter_by(id=user_id).first()
-
-    
