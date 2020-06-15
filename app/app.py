@@ -52,7 +52,9 @@ class BaseModelView(sqla.ModelView):
                 raise Exception("User must complete the previous activity")
 
     def on_model_delete(self, model):
-        if isinstance(model, models.PUISStudentActivity):
+        if isinstance(model, models.Activity) and model.id == TOGA_ACTIVITY_ID:
+            raise Exception('This activity cannot be removed since it is required in a hardcoded logic.')
+        elif isinstance(model, models.PUISStudentActivity):
             if model.activity.id == TOGA_ACTIVITY_ID:
                 puis_student_activity_toga_size = models.PUISStudentTogaSize.query.filter_by(
                     puis_student_id=model.puis_student.id).first()
