@@ -37,9 +37,9 @@ class ActivityRequirement(db.Model):
 
     # FK data
     activity: Column = db.relationship("Activity", foreign_keys=[activity_id],
-                                       backref=db.backref("activity_requirement_activity", lazy="dynamic"))
+                                       backref=db.backref("Activities depending on this activity", lazy="dynamic"))
     depends_on_activity: Column = db.relationship("Activity", foreign_keys=[depends_on_activity_id],
-                                                  backref=db.backref("activity_requirement_depends_on_activity",
+                                                  backref=db.backref("Depends on activities",
                                                                      lazy="dynamic"))
 
     def __str__(self):
@@ -119,7 +119,7 @@ class PUISStudentActivity(db.Model):
 
     # FK data
     puis_student: Column = db.relationship("PUISStudent", backref=db.backref("Completing Activity", lazy="dynamic"))
-    activity: Column = db.relationship("Activity", backref=db.backref("puis_student_activity_activity", lazy="dynamic"))
+    activity: Column = db.relationship("Activity")
     signed_by_user: Column = db.relationship("User", backref=db.backref("puis_student_activity_user", lazy="dynamic"))
 
     def __str__(self):
