@@ -1,3 +1,3 @@
 
-ALTER TABLE roles
+ALTER TABLE `roles`
 	CHANGE `role` `name` varchar(255);

@@ -1,5 +1,29 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-<h1>Hello world!</h1>
+  <div class="well">
+    <form method="GET">
+      <div class="form-group">
+        <label for="student_idnumber">Student ID Number:</label>
+        <input type="text" id="student_idnumber" name="student_idnumber" value="{{ student_idnumber }}">
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    {% if record_list %}
+      <table class="table table-bordered">
+        <thead>
+          <th>Activity name</th>
+          <th>Completed on</th>
+        </thead>
+        <tbody>
+          {% for activity in record_list %}
+            <tr>
+              <td>{{ activity.name }}</td>
+              <td>{% if activity.completed_at %}{{ activity.completed_at.strftime('%d %B %Y') }}{% else %}Incomplete{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
 {% endblock %}
