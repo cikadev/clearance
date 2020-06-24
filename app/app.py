@@ -51,6 +51,9 @@ class BaseModelView(sqla.ModelView):
             if not models.PUISStudentActivity.can_user_take_activity(model.puis_student.id, model.activity.id):
                 raise Exception("User must complete the previous activity")
 
+            if not models.UserProdiConstraint.is_user_has_access_for_prodi(current_user.id, model.puis_student.prodi_id):
+                raise Exception("The student you are trying to modify is out of your Prodi scope")
+
     def on_model_delete(self, model):
         if isinstance(model, models.PUISStudentActivity):
             if model.activity.id == TOGA_ACTIVITY_ID:
@@ -59,6 +62,9 @@ class BaseModelView(sqla.ModelView):
                 if puis_student_activity_toga_size is not None:
                     models.db.session.delete(puis_student_activity_toga_size)
                     models.db.session.commit()
+
+            if not models.UserProdiConstraint.is_user_has_access_for_prodi(current_user.id, model.puis_student.prodi_id):
+                raise Exception("The student you are trying to modify is out of your Prodi scope")
         elif isinstance(model, models.PUISStudentTogaSize):
             puis_student_activity = models.PUISStudentActivity.query.filter_by(
                 puis_student_id=model.puis_student.id,
@@ -94,6 +100,8 @@ class GeneralModelView(BaseModelView):
 
 class PUISStudentTogaSizeViewModel(BaseModelView):
     def on_model_change(self, form, model, is_created: bool):
+        super().on_model_change(form, model, is_created)
+
         if isinstance(model, models.PUISStudentTogaSize):
             if is_created:
                 if not models.PUISStudentActivity.can_user_take_activity(model.puis_student.id, TOGA_ACTIVITY_ID):
@@ -210,6 +218,7 @@ admin.add_view(AdminModelView(models.PUISStudentStatus, models.db.session, categ
 
 # System
 admin.add_view(AdminModelView(models.User, models.db.session, category="System"))
+admin.add_view(AdminModelView(models.UserProdiConstraint, models.db.session, category="System"))
 admin.add_view(AdminModelView(models.Roles, models.db.session, category="System"))
 admin.add_view(AdminModelView(models.Department, models.db.session, category="System"))
 

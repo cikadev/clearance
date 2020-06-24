@@ -194,6 +194,32 @@ class Prodi(db.Model):
         return self.name
 
 
+class UserProdiConstraint(db.Model):
+    __tablename__ = "user-prodi_constraint"
+
+    id: Column = db.Column(db.Integer(), primary_key=True)
+    user_id: Column = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    prodi_id: Column = db.Column(db.Integer, db.ForeignKey("prodi.id"), nullable=False)
+    created_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
+    updated_at: Column = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # FK data
+    user: Column = db.relationship("User", backref=db.backref("User", lazy="dynamic"))
+    prodi: Column = db.relationship("Prodi", backref=db.backref("Prodi user assigned to", lazy="dynamic"))
+
+    @staticmethod
+    def is_user_has_access_for_prodi(user_id, prodi_id):
+        # If user doesn't have any constraint
+        if UserProdiConstraint.query.filter_by(user_id=user_id).count() == 0:
+            return True
+
+        result : [UserProdiConstraint] = UserProdiConstraint.query.filter_by(user_id=user_id, prodi_id=prodi_id).all()
+        for user_prodi_constraint in result:
+            if user_prodi_constraint.prodi_id == prodi_id:
+                return True
+        return False
+
+
 class User(db.Model, UserMixin):
     id: Column = db.Column(db.Integer(), primary_key=True)
     username: Column = db.Column(db.String(255), unique=True, nullable=False)
