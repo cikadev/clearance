@@ -1,25 +1,25 @@
 import json
 
-from flask_admin.contrib.fileadmin import FileAdmin
+from flask import Flask, Blueprint, render_template
+from flask_admin import Admin, expose, BaseView
 from flask_admin.menu import MenuLink
+from flask_admin.contrib.fileadmin import FileAdmin
+from flask_security import SQLAlchemyUserDatastore, Security, current_user
+import os.path as osp
 
 import models
-
-from flask import Flask, request, url_for, redirect, abort, Blueprint, render_template
-from flask_admin import Admin, expose, BaseView
-from flask_security import SQLAlchemyUserDatastore, Security, current_user
-from flask_admin.contrib import sqla
-import os.path as osp
+from views import *
 
 app: Flask = Flask(__name__)
 app.config.from_pyfile("../config.py")
-
 models.db.init_app(app)
 
 user_datastore: SQLAlchemyUserDatastore = SQLAlchemyUserDatastore(models.db, models.User, models.Roles)
 security: Security = Security(app, user_datastore)
 
-TOGA_ACTIVITY_ID = 4
+# ----------------------
+# BEGIN CLIENT BLUEPRINT
+# ----------------------
 
 
 class BaseModelView(sqla.ModelView):
@@ -198,19 +198,44 @@ def student(student_id):
 
 app.register_blueprint(client_blueprint)
 
+# --------------------
+# END CLIENT BLUEPRINT
+# --------------------
+
+# ---------------------
+# BEGIN ADMIN BLUEPRINT
+# ---------------------
+
+
+class AdminFileAdmin(FileAdmin):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.has_role("admin")
+
+
+class AuthenticatedMenuLink(MenuLink):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+
+class UnauthenticatedMenuLink(MenuLink):
+    def is_accessible(self):
+        return not current_user.is_authenticated
+
+
 admin: Admin = Admin(
     app,
-    "Clearance Admin"
+    "Clearance Admin",
+    index_view=HomeView()
 )
 
 # Students
 admin.add_view(PUISStudentModelView(models.PUISStudent, models.db.session, category="Student"))
-admin.add_view(GeneralModelView(models.PUISStudentActivity, models.db.session, category="Student"))
+admin.add_view(PUISStudentActivityModelView(models.PUISStudentActivity, models.db.session, category="Student"))
 admin.add_view(CardModelView(models.Card, models.db.session, category="Student"))
-admin.add_view(PUISStudentTogaSizeViewModel(models.PUISStudentTogaSize, models.db.session, category="Student"))
+admin.add_view(PUISStudentTogaSizeModelView(models.PUISStudentTogaSize, models.db.session, category="Student"))
 
 # Configuration
-admin.add_view(AdminModelView(models.Activity, models.db.session, category="Configuration"))
+admin.add_view(ActivityModelView(models.Activity, models.db.session, category="Configuration"))
 admin.add_view(AdminModelView(models.ActivityRequirement, models.db.session, category="Configuration"))
 admin.add_view(AdminModelView(models.Prodi, models.db.session, category="Configuration"))
 admin.add_view(AdminModelView(models.TogaSize, models.db.session, category="Configuration"))
@@ -231,6 +256,10 @@ admin.add_view(ProfileView(name="Profile", endpoint="profile"))
 
 admin.add_link(UnauthenticatedMenuLink(name="Login", endpoint="security.login"))
 admin.add_link(AuthenticatedMenuLink(name="Logout", endpoint="security.logout"))
+
+# -------------------
+# END ADMIN BLUEPRINT
+# -------------------
 
 if __name__ == "__main__":
     app.run(debug=True)
