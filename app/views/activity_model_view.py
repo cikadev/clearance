@@ -2,10 +2,12 @@ from . admin_model_view import AdminModelView
 
 import models
 
+# TODO
+# Circular import
+TOGA_ACTIVITY_ID = 4
+
 
 class ActivityModelView(AdminModelView):
-    TOGA_ACTIVITY_ID = 4
-
     form_excluded_columns = AdminModelView.form_excluded_columns + ('activity_record',)
 
     def on_model_delete(self, model):

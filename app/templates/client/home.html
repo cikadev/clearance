@@ -6,16 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
+          integrity="sha256-yMjaV542P+q1RnH6XByCPDfUFhmOafWbeLPmqKh11zo=" crossorigin="anonymous"/>
 
     <title>Clearance</title>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">
-        Clearance
-    </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+    <a class="navbar-brand" href="/">Clearance</a>
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/choose-toga-size">Choose Toga Size</a>
+      </li>
+    </ul>
+  </div>
 </nav>
 
 <div class="container">
@@ -26,10 +40,18 @@
                     <label for="student-id">Student ID</label>
                     <input type="text" class="form-control" id="student-id">
                 </div>
+                <div class="form-group">
+                    <label for="date-of-birth-picker">Date of Birth</label>
+                    <div id="date-of-birth-picker"></div>
+                </div>
                 <button type="submit" class="btn btn-primary" id="get-info-button" disabled>Get Info</button>
             </form>
 
-            <div class="alert alert-primary invisible mb-4 mt-4" id="info-alert" role="alert">
+            <div class="alert alert-danger invisible mb-4 mt-4" id="info-error" role="alert">
+                <p id="info-error-message"></p>
+            </div>
+
+            <div class="alert alert-primary invisible mb-4 mt-4" id="info-result" role="alert">
                 <table class="table">
                     <thead>
                     <tr>
@@ -37,7 +59,7 @@
                         <th scope="col">Time</th>
                     </tr>
                     </thead>
-                    <tbody id="info-table-body">
+                    <tbody id="info-result-table-body">
                     </tbody>
                 </table>
             </div>
@@ -56,32 +78,64 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"
+        integrity="sha256-ZsWP0vT+akWmvEMkNYgZrPHKU9Ke8nYBPC3dqONp1mY=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"
+        integrity="sha256-SS5UPPXAM4HWVoFCt0tsx90VWhRf7cStU5kabObE8cw=" crossorigin="anonymous"></script>
 <script type="text/javascript">
-    const form_button = document.querySelector("#get-info-button");
-    const form_input = document.querySelector("#student-id");
-    const form_alert = document.querySelector("#info-alert");
-    const info_table_body = document.querySelector("#info-table-body");
+    const dateOfBirthDatePickerElement = document.querySelector("#date-of-birth-picker");
+    const formButtonElement = document.querySelector("#get-info-button");
+    const formInputElement = document.querySelector("#student-id");
+    const infoResultElement = document.querySelector("#info-result");
+    const infoResultTableBodyElement = document.querySelector("#info-result-table-body");
+    const infoErrorElement = document.querySelector("#info-error");
+    const infoErrorMessageElement = document.querySelector("#info-error-message");
 
-    form_input.addEventListener("input", _ => {
-        form_button.disabled = form_input.value.length === 0;
+    $(function () {
+        $(dateOfBirthDatePickerElement).datetimepicker({
+            inline: true,
+            format: 'DD/MM/YYYY',
+            // https://en.wikipedia.org/wiki/Oldest_people
+            minDate: moment().year(-122),
+            maxDate: moment(),
+        });
     });
 
-    function loading(isLoading) {
-        form_button.disabled = isLoading;
-        form_input.disabled = isLoading;
-        if (isLoading) {
-            form_alert.classList.add("invisible");
-        } else {
-            form_alert.classList.remove("invisible");
-        }
+    formInputElement.addEventListener("input", _ => {
+        formButtonElement.disabled = formInputElement.value.length === 0;
+    });
+
+    function error(msg) {
+        infoErrorElement.classList.remove("invisible");
+        infoErrorMessageElement.innerText = msg;
     }
 
-    form_button.addEventListener("click", e => {
+    function loading(isLoading) {
+        formButtonElement.disabled = isLoading;
+        formInputElement.disabled = isLoading;
+    }
+
+    formButtonElement.addEventListener("click", e => {
         e.preventDefault();
+
+        infoResultElement.classList.add("invisible");
+        infoErrorElement.classList.add("invisible");
 
         loading(true);
 
-        fetch(`/api/v1/student/${form_input.value}`)
+        const dateOfBirth = $(dateOfBirthDatePickerElement).data("DateTimePicker").date();
+        const data = {
+            dateOfBirth: dateOfBirth.format("YYYY-MM-DD")
+        };
+
+
+        fetch(`/api/v1/student/${formInputElement.value}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
             .then(json => json.json())
             .then(data => {
                 if (data.success) {
@@ -95,13 +149,14 @@
                         </tr>`;
                     });
 
-                    info_table_body.innerHTML = tableRows;
+                    infoResultTableBodyElement.innerHTML = tableRows;
+                    infoResultElement.classList.remove("invisible");
                 } else {
-                    // error("Can't parse data");
+                    error(data.error);
                 }
             })
-            .catch(() => {
-                // error("Can't connect to the source");
+            .catch((err) => {
+                error(`Error: ${err}`);
             })
             .finally(_ => {
                 loading(false);

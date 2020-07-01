@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"
+          integrity="sha256-yMjaV542P+q1RnH6XByCPDfUFhmOafWbeLPmqKh11zo=" crossorigin="anonymous"/>
+
+    <title>Clearance</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+            aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand" href="/">Clearance</a>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/choose-toga-size">Choose Toga Size</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="m-3 row justify-content-center">
+        <div class="col-lg-6">
+            <div class="alert alert-info" role="alert">
+                Please take a note that you can't choose your toga size before completing ...
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="input-student-id">Student ID</label>
+                    <input type="text" class="form-control" id="input-student-id">
+                </div>
+                <div class="form-group">
+                    <label for="datepicker-date-of-birth">Date of Birth</label>
+                    <div id="datepicker-date-of-birth"></div>
+                </div>
+                <div class="form-group">
+                    <label for="select-toga-size">Toga Size</label>
+                    <select class="form-control" id="select-toga-size">
+                        <option value="unselected">Select toga size...</option>
+                        {% for size in available_toga_size %}
+                            <option value="{{ size.id|e }}">{{ size.size_name|e }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" id="button-set-toga" disabled>Set Toga Size</button>
+            </form>
+
+            <div class="alert alert-danger invisible mb-4 mt-4" id="alert-error" role="alert">
+                <p id="alert-error-message"></p>
+            </div>
+
+            <div class="alert alert-success invisible mb-4 mt-4" id="alert-success" role="alert">
+                <p id="alert-success-message"></p>
+            </div>
+
+            <div class="modal fade" id="modal-confirmation-1" tabindex="-1" role="dialog"
+                 aria-labelledby="modal-confirmation-1-label"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-confirmation-1-label">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            You can't change your toga size afterwards.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="modal-confirmation-1-confirm-button">I agree</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-confirmation-2" tabindex="-1" role="dialog"
+                 aria-labelledby="modal-confirmation-2-label"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-confirmation-2-label">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to proceed?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" id="modal-confirmation-2-confirm-button">Proceed</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"
+        integrity="sha256-ZsWP0vT+akWmvEMkNYgZrPHKU9Ke8nYBPC3dqONp1mY=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"
+        integrity="sha256-SS5UPPXAM4HWVoFCt0tsx90VWhRf7cStU5kabObE8cw=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    const inputStudentIdElement = document.querySelector("#input-student-id");
+    const datepickerDateOfBirthDateElement = document.querySelector("#datepicker-date-of-birth");
+    const selectTogaSizeElement = document.querySelector("#select-toga-size");
+    const buttonSetTogaElement = document.querySelector("#button-set-toga");
+    const alertSuccessElement = document.querySelector("#alert-success");
+    const alertSuccessMessageElement = document.querySelector("#alert-success-message");
+    const alertErrorElement = document.querySelector("#alert-error");
+    const alertErrorMessageElement = document.querySelector("#alert-error-message");
+    const modal1ConfirmationButton = document.querySelector("#modal-confirmation-1-confirm-button");
+    const modal2ConfirmationButton = document.querySelector("#modal-confirmation-2-confirm-button");
+    const modalConfirmation1 = $("#modal-confirmation-1");
+    const modalConfirmation2 = $("#modal-confirmation-2");
+
+    $(function () {
+        $(datepickerDateOfBirthDateElement).datetimepicker({
+            inline: true,
+            format: 'DD/MM/YYYY',
+            // https://en.wikipedia.org/wiki/Oldest_people
+            minDate: moment().year(-122),
+            maxDate: moment(),
+        });
+    });
+
+    function disableStateButtonRefresh() {
+        buttonSetTogaElement.disabled = inputStudentIdElement.value.length === 0 || selectTogaSizeElement.value === "unselected";
+    }
+
+    inputStudentIdElement.addEventListener("input", _ => {
+        disableStateButtonRefresh();
+    });
+
+    selectTogaSizeElement.addEventListener("change", _ => {
+        disableStateButtonRefresh();
+    })
+
+    function error(msg) {
+        alertErrorElement.classList.remove("invisible");
+        alertErrorMessageElement.innerText = msg;
+    }
+
+    function loading(isLoading) {
+        buttonSetTogaElement.disabled = isLoading;
+        inputStudentIdElement.disabled = isLoading;
+        selectTogaSizeElement.disabled = isLoading;
+    }
+
+    function proceed() {
+        alertErrorElement.classList.add("invisible");
+        alertSuccessElement.classList.add("invisible");
+
+        loading(true);
+
+        const dateOfBirth = $(datepickerDateOfBirthDateElement).data("DateTimePicker").date();
+        const data = {
+            dateOfBirth: dateOfBirth.format("YYYY-MM-DD"),
+            togaSize: selectTogaSizeElement.value
+        };
+
+        fetch(`/api/v1/student/toga-size/${inputStudentIdElement.value}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+            .then(json => json.json())
+            .then(data => {
+                if (data.success) {
+                    alertSuccessMessageElement.innerText = "Success, the data has been set.";
+                    alertSuccessElement.classList.remove("invisible");
+                } else {
+                    error(data.error);
+                }
+            })
+            .catch((err) => {
+                error(`Error: ${err}`);
+            })
+            .finally(_ => {
+                loading(false);
+            });
+    }
+
+    buttonSetTogaElement.addEventListener("click", e => {
+        e.preventDefault();
+
+        modalConfirmation1.modal("show");
+    });
+
+    modal1ConfirmationButton.addEventListener("click", e => {
+       e.preventDefault();
+
+       modalConfirmation1.modal("hide");
+       modalConfirmation2.modal("show");
+    });
+
+    modal2ConfirmationButton.addEventListener("click", e => {
+       e.preventDefault();
+
+       modalConfirmation2.modal("hide");
+
+       proceed();
+    });
+</script>
+</body>
+</html>
